@@ -1,6 +1,6 @@
 # AsposeLetters
 
-A PDF generation framework built with **Aspose.PDF** and **Aspose.Words** for .NET 6, developed to explore programmatic document generation with precise layout control.
+A PDF generation framework built with **Aspose.PDF** and **Aspose.Words** for .NET 8, developed to explore programmatic document generation with precise layout control.
 
 ## Overview
 
@@ -47,6 +47,7 @@ AsposeLetters/
 
 ## Dependencies
 
+- ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)
 - [Aspose.PDF for .NET](https://products.aspose.com/pdf/net/) `24.11.0`
 - [Aspose.Words for .NET](https://products.aspose.com/words/net/) `25.1.0`
 
