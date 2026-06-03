@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content="Phillip Berger — Salesforce, C#, Python, automation, and consciousness research. Based in Dallas-Fort Worth, TX.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phillip Berger</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d0d;
+      --bg-card:   #111111;
+      --border:    #2a2a2a;
+      --border-2:  #1e1e1e;
+      --text-pri:  #e8e8e8;
+      --text-sec:  #cacaca;
+      --text-mute: #8a8a8a;
+      --text-dim:  #707070;
+      --accent:    #4ade80;
+      --font:      'JetBrains Mono', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg:        #f5f5f0;
+      --bg-card:   #efefea;
+      --border:    #ccccbc;
+      --border-2:  #ddddd0;
+      --text-pri:  #1a1a1a;
+      --text-sec:  #444444;
+      --text-mute: #707070;
+      --text-dim:  #4a5e46;
+      --accent:    #1a7a3a;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-sec);
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Layout ── */
+    .site-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    header .name {
+      color: var(--text-pri);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+    }
+
+    header .tagline {
+      color: var(--text-mute);
+      font-size: 11px;
+      letter-spacing: 0.03em;
+    }
+
+    header .header-right {
+      margin-left: auto;
+    }
+
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--text-pri);
+      color: var(--text-pri);
+      font-family: var(--font);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .theme-toggle:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ── Body ── */
+    .body {
+      display: flex;
+      flex: 1;
+    }
+
+    /* ── Sidebar nav ── */
+    nav {
+      width: 180px;
+      min-width: 180px;
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+    }
+
+    .nav-comment {
+      color: var(--text-dim);
+      font-size: 11px;
+      padding: 8px 22px 6px;
+      letter-spacing: 0.04em;
+    }
+
+    nav button {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      border-left: 2px solid transparent;
+      padding: 11px 22px;
+      color: var(--text-mute);
+      font-family: var(--font);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      text-align: left;
+      transition: color 0.15s;
+    }
+
+    nav button:hover { color: var(--text-sec); }
+
+    nav button.active {
+      color: var(--text-pri);
+      border-left: 2px solid var(--accent);
+    }
+
+    /* ── Content ── */
+    main {
+      flex: 1;
+      padding: 32px 40px;
+      max-width: 700px;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-label {
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+
+    /* ── About ── */
+    .about-text {
+      color: var(--text-sec);
+      line-height: 2;
+      font-size: 12px;
+      max-width: 560px;
+    }
+
+    /* ── Projects ── */
+    .project-card {
+      border: 1px solid var(--border);
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      transition: border-color 0.15s;
+    }
+
+    .project-card:hover { border-color: #3a3a3a; }
+
+    .project-title {
+      color: var(--text-pri);
+      font-size: 12px;
+      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+    }
+
+    .project-desc {
+      color: var(--text-mute);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .project-tag {
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      margin-top: 10px;
+    }
+
+    .project-link {
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 12px;
+    }
+
+    .project-link:hover { text-decoration: underline; }
+
+    /* ── Interests ── */
+    .interest-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-2);
+      font-size: 12px;
+    }
+
+    .interest-row:last-child { border-bottom: none; }
+
+    .interest-label { color: var(--text-sec); }
+
+    .interest-meta {
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Books ── */
+    .interests-subhead {
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      margin: 24px 0 10px;
+    }
+
+    .book-row {
+      border-bottom: 1px solid var(--border-2);
+      padding: 14px 0;
+    }
+
+    .book-row:last-child { border-bottom: none; }
+
+    .book-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .book-title {
+      color: var(--text-pri);
+      font-size: 12px;
+      letter-spacing: 0.03em;
+      flex-shrink: 0;
+    }
+
+    .book-author {
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .book-note {
+      color: var(--text-mute);
+      font-size: 11px;
+      line-height: 1.75;
+    }
+
+    .book-note::before {
+      content: '// ';
+      color: var(--text-dim);
+    }
+
+    /* ── Exploring ── */
+    .exploring-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border-2);
+      font-size: 12px;
+      color: var(--text-sec);
+    }
+
+    .exploring-item:last-of-type { border-bottom: none; }
+
+    .exploring-item::before {
+      content: '>';
+      color: var(--accent);
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    /* ── Contact ── */
+    .contact-tagline {
+      color: var(--text-mute);
+      font-size: 11px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .contact-row {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border-2);
+      font-size: 12px;
+    }
+
+    .contact-row:last-of-type { border-bottom: none; }
+
+    .contact-label {
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      min-width: 64px;
+    }
+
+    .contact-value {
+      color: var(--text-sec);
+    }
+
+    .contact-value a {
+      color: var(--text-sec);
+    }
+
+    .contact-value a:hover { color: var(--accent); }
+
+    /* ── Prompt line ── */
+    .prompt-line {
+      color: var(--accent);
+      font-size: 11px;
+      margin-top: 28px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Blinking cursor ── */
+    .cursor {
+      display: inline-block;
+      width: 7px;
+      height: 13px;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: -2px;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    footer .footer-left {
+      color: var(--text-dim);
+      font-size: 11px;
+    }
+
+    footer .footer-right {
+      color: var(--text-dim);
+      font-size: 11px;
+    }
+
+    footer .footer-right a {
+      color: var(--text-mute);
+    }
+
+    footer .footer-right a:hover { color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      header { padding: 14px 18px; }
+      nav { width: 130px; min-width: 130px; }
+      main { padding: 20px 18px; }
+      footer { padding: 12px 18px; }
+      .interest-row { flex-wrap: wrap; gap: 4px; }
+      .book-author { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="site-wrap">
+
+  <header>
+    <span class="name">\\ PHILLIP_BERGER</span>
+    <span class="tagline">// salesforce &middot; c# &middot; python &middot; ai &middot; frontier topics in consciousness &middot; dallas, tx</span>
+    <div class="header-right">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">[ light ]</button>
+    </div>
+  </header>
+
+  <div class="body">
+
+    <nav>
+      <div class="nav-comment">// nav</div>
+      <button class="active" onclick="show('about', this)">ABOUT</button>
+      <button onclick="show('projects', this)">PROJECTS</button>
+      <button onclick="show('interests', this)">INTERESTS</button>
+      <button onclick="show('exploring', this)">EXPLORING</button>
+      <button onclick="show('contact', this)">CONTACT</button>
+    </nav>
+
+    <main>
+
+      <div class="section active" id="about">
+        <div class="section-label">// ABOUT</div>
+        <p class="about-text">
+          Innovative problem-solver with a passion for automating complex workflows and optimizing 
+          processes. I code daily to create and refine solutions that enhance efficiency, reduce 
+          manual effort, and improve system integrations. With a strong background in Salesforce, 
+          C#, and business process automation, I enjoy building practical systems that solve real 
+          operational challenges.
+        </p>
+        <p class="about-text" style="margin-top: 1.4em;">
+          My interests may appear unrelated at first glance. Software automation, process design, 
+          remote viewing, anomalous cognition, and consciousness research seem to exist in 
+          completely separate domains. To me, however, they are connected through a shared interest 
+          in systems, signal extraction, observation, and the limits of current models. Whether 
+          debugging software, analyzing workflows, or exploring claims surrounding consciousness and 
+          perception, I'm interested in how humans detect patterns, process information, and 
+          interact with complex systems.
+        </p>
+        <p class="about-text" style="margin-top: 1.4em;">
+          Beyond software development, I enjoy exploring frontier topics related to consciousness, 
+          perception, and human potential. I follow scientific research and public discourse 
+          surrounding areas such as remote viewing, mind-matter interactions, extrasensory 
+          perception (ESP), and non-human intelligence (NHI). While many of these subjects remain 
+          controversial or poorly understood, I believe they raise important questions about the 
+          nature of consciousness and the boundaries of human experience.
+        </p>
+        <p class="about-text" style="margin-top: 1.4em;">
+          We are living through a period of rapid technological and cultural change. From advances 
+          in artificial intelligence to growing public discussions surrounding anomalous phenomena 
+          and consciousness research, I find this era deeply inspiring. It motivates me to continue 
+          building, learning, questioning assumptions, and remaining adaptable in the face of 
+          emerging ideas and new discoveries.<span class="cursor"></span></p>
+        </p>
+        <div class="prompt-line">&gt; whoami</div>
+      </div>
+
+      <div class="section" id="projects">
+        <div class="section-label">// PROJECTS</div>
+
+        <div class="project-card">
+          <div class="project-title">\\ SOP_CONSOLIDATION_TOOL</div>
+          <div class="project-desc">
+            Custom single-file HTML application consolidating 100+ state and federal garnishment SOPs 
+            into a unified, interactive reference tool. Built with a responsive dark/light mode UI
+            and smart dropdown system that dynamically renders state and order-type-specific guidance,
+            including Workday field instructions, legal compliance sections, exception fields, and
+            order-specific messaging from a centralized JavaScript data layer. Eliminates document
+            fragmentation across the organization and ensures consistent, up-to-date process references
+            for the entire garnishment team.
+          </div>
+          <div class="project-tag">[HTML] [INTERNAL TOOLING]</div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-title">\\ NAME_PARSER</div>
+          <div class="project-desc">
+            Python utility for splitting raw full name strings into first and last
+            name fields. Built for OCR processing of garnishment orders, where name
+            formats vary widely across jurisdictions and document sources. Handles
+            comma, hyphen, prefix, compound surname, and suffix variations.
+          </div>
+          <div class="project-tag">[PYTHON] [OCR] [GARNISHMENT PROCESSING]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/name-parser" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+
+        <div class="project-card">
+          <div class="project-title">\\ FILE_MANAGER_APP</div>
+          <div class="project-desc">
+            .NET 8 C# library for automating high-volume file operations across local
+            and network directories. Supports moving, renaming, and auditing files
+            with optional date-range filtering and automatic subdirectory sorting by
+            year or year/month. Interface-driven architecture with dependency
+            injection via a static Factory, and a StreamWriter-based logger scoped
+            to each operation's lifetime.
+          </div>
+          <div class="project-tag">[C#] [.NET 8] [FILE AUTOMATION] [WINDOWS]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/file-manager-app" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+        <div class="project-card">
+          <div class="project-title">\\ ASPOSE_LETTERS</div>
+          <div class="project-desc">
+            PDF generation framework built with Aspose.PDF and Aspose.Words for
+            .NET 8, developed to explore programmatic document generation with
+            precise layout control. Uses a composable section architecture
+            (letterhead, address blocks, footer, signature) with MM-based
+            positioning converted to PDF points at runtime. Includes a typed
+            field schema with Salesforce API name mapping and a text rectangle
+            height estimator for dynamic vertical layout before rendering.
+          </div>
+          <div class="project-tag">[C#] [.NET 8] [PDF GENERATION] [ASPOSE]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/aspose-letters" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+
+        <div class="prompt-line" style="margin-top: 20px;">&gt; build.optimize.repeat</div>
+
+        <div class="section-label" style="margin-top: 36px;">// SYSTEMS, SIGNALS &amp; CONSCIOUSNESS</div>
+
+        <div class="project-card">
+          <div class="project-title">\\ LST_DISPLAY</div>
+          <div class="project-desc">
+            Arduino sketch for the Soldered Inkplate 10 (ESP32 e-ink display) that
+            shows Local Sidereal Time, UTC, and local time on a persistent low-power
+            screen. Includes a live countdown to the peak remote viewing window
+            (12:45-14:15 LST), based on parapsychology research suggesting ~400%
+            improved accuracy near 13:30 LST when the galactic center aligns with
+            the horizon. LST is derived from the Unix epoch via Julian Date to avoid
+            a DST double-subtraction bug during CST/CDT transitions.
+          </div>
+          <div class="project-tag">[C++] [ARDUINO] [ESP32] [E-INK] [ASTRONOMY]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/lst-display" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+
+        <div class="project-card">
+          <div class="project-title">\\ CLAUDE-ASSISTED_RV_PROTOCOL</div>
+          <div class="project-desc">
+            A structured, verifiable protocol for conducting remote viewing sessions
+            with Claude AI as tasker or viewer. Uses a password-protected Word
+            document as a tamper-evident target container — locked before the session
+            begins — to eliminate motivated feedback and make results falsifiable.
+            Developed through direct experimentation across live sessions, refining
+            the procedure to give both human and AI a shared standard of integrity.
+          </div>
+          <div class="project-tag">[REMOTE VIEWING] [PROTOCOL] [PARAPSYCHOLOGY] [AI]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/remote-viewing-protocol" target="_blank" rel="noopener">&gt; VIEW PROTOCOL</a>
+        </div>
+        <div class="prompt-line">&gt; signal_detected_</div>
+      </div>
+
+      <div class="section" id="interests">
+        <div class="section-label">// INTERESTS</div>
+        <div class="interest-row">
+          <span class="interest-label">Salesforce Trailhead</span>
+          <span class="interest-meta">[RANGER] [21 SUPERBADGES]</span>
+        </div>
+        <div class="interest-row">
+          <span class="interest-label">Automated PDF Generation</span>
+          <span class="interest-meta">[ACTIVE]</span>
+        </div>
+
+        <div class="interests-subhead">// READING</div>
+
+        <div class="book-row">
+          <div class="book-top">
+            <span class="book-title">Remote Viewing Secrets</span>
+            <span class="book-author">[BY Joseph McMoneagle]</span>
+          </div>
+          <div class="book-note">Remote Viewer #001 in the Army's STARGATE program. Learn how to remote view and develop your own abilities.</div>
+        </div>
+
+        <div class="book-row">
+          <div class="book-top">
+            <span class="book-title">Limitless Mind</span>
+            <span class="book-author">[BY Russell Targ]</span>
+          </div>
+          <div class="book-note">Stanford Research Institute's investigations into psychic abilities and the spiritual implications of remote viewing.</div>
+        </div>
+
+        <div class="book-row">
+          <div class="book-top">
+            <span class="book-title">The Science of Magic</span>
+            <span class="book-author">[BY Dean Radin PhD]</span>
+          </div>
+          <div class="book-note">Explores scientific breakthroughs, from quantum mechanics to the mind-body connection to non-local consciousness.</div>
+        </div>
+
+        <div class="book-row">
+          <div class="book-top">
+            <span class="book-title">Encounters</span>
+            <span class="book-author">[BY D.W. Pasulka]</span>
+          </div>
+          <div class="book-note">Examines the various forms of NHI contact and how the phenomena interacts with humanity.</div>
+        </div>
+
+        <div class="book-row">
+          <div class="book-top">
+            <span class="book-title">Skinwalkers at the Pentagon</span>
+            <span class="book-author">[BY James T. Lacatski D.Eng.]</span>
+          </div>
+          <div class="book-note">The Pentagon's AAWSAP program to investigate UFOs leads to Skinwalker Ranch, where strange phenomena is reported and the entities that followed military personnel back home.</div>
+        </div>
+
+        <div class="prompt-line">&gt; perception_under_review_</div>
+      </div>
+
+      <div class="section" id="exploring">
+        <div class="section-label">// CURRENTLY EXPLORING</div>
+        <div class="exploring-item">Building an RV lexicon and exploring signal extraction</div>
+        <div class="exploring-item">ARV protocols</div>
+        <div class="exploring-item">Learning more about AI-assisted systems design</div>
+        <div class="prompt-line">&gt; always_learning_</div>
+      </div>
+
+      <div class="section" id="contact">
+        <div class="section-label">// CONTACT</div>
+        <div class="contact-tagline">Feel free to reach out regarding software, systems design, or consciousness research.</div>
+        <div class="contact-row">
+          <span class="contact-label">EMAIL</span>
+          <span class="contact-value"><a href="mailto:berger.phil@gmail.com">berger.phil@gmail.com</a></span>
+        </div>
+        <div class="contact-row">
+          <span class="contact-label">LINKEDIN</span>
+          <span class="contact-value"><a href="https://www.linkedin.com/in/phillip-berger-99815488/" target="_blank" rel="noopener">linkedin.com/in/phillip-berger-99815488</a></span>
+        </div>
+        <div class="contact-row">
+          <span class="contact-label">GITHUB</span>
+          <span class="contact-value"><a href="https://github.com/excelmon" target="_blank" rel="noopener">github.com/excelmon</a></span>
+        </div>
+        <div class="prompt-line">&gt; establish_connection_</div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <footer>
+    <span class="footer-left">phillipberger.com</span>
+    <span class="footer-right">
+      <a href="https://github.com/excelmon" target="_blank" rel="noopener">github/excelmon</a>
+    </span>
+  </footer>
+
+</div>
+
+<script>
+  function show(id, el) {
+    document.querySelectorAll('.section').forEach(function(s) {
+      s.classList.remove('active');
+    });
+    document.querySelectorAll('nav button').forEach(function(b) {
+      b.classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
+  }
+
+  function toggleTheme() {
+    var html = document.documentElement;
+    var btn  = document.getElementById('themeBtn');
+    if (html.getAttribute('data-theme') === 'light') {
+      html.removeAttribute('data-theme');
+      btn.textContent = '[ light ]';
+    } else {
+      html.setAttribute('data-theme', 'light');
+      btn.textContent = '[ dark ]';
+    }
+  }
+</script>
+
+</body>
+</html>
