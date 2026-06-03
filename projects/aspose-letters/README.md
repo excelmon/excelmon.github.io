@@ -7,6 +7,8 @@ A PDF generation framework built with **Aspose.PDF** and **Aspose.Words** for .N
 This project demonstrates how to build structured, data-driven PDF letters using a composable architecture. Rather than relying on templates or mail-merge tools, all layout and text placement is handled in code — giving full control over positioning, formatting, and dynamic content.
 
 The included `DemoLetterConstructor` generates a two-page sample letter that walks through the available utility methods and layout patterns.
+<img width="597" height="770" alt="demo-letter-preview" src="https://github.com/user-attachments/assets/e3109227-a407-45ef-9608-1baf067317da" />
+
 
 ## Project Structure
 
