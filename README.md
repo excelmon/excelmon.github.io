@@ -1,72 +1,41 @@
-# Name Parser — `full_name_split.py`
-
-A Python utility for splitting a raw full name string into discrete `first_name` and `last_name` fields. Originally written to support OCR processing of garnishment orders, where name formats vary widely across jurisdictions and data sources.
-
----
-
-## The Problem
-
-Real-world name data is inconsistent. A single pipeline may encounter all of the following for the same person:
-
 ```
-Phil Berger
-Berger, Phil
-Berger-Phil
-Phil D. Berger Jr.
-Von Berger Phil D
-Phil D Berger Zapatero
-```
-
-Standard string splits fail silently on most of these. This utility handles them explicitly.
-
----
-
-## Supported Formats
-
-| Format | Example |
-|---|---|
-| First Last | `Phil Berger` |
-| First Middle Last | `Phil Dale Berger` |
-| First M. Last | `Phil D. Berger` |
-| Last, First | `Berger, Phil` |
-| Last, First Middle | `Berger, Phil Dale` |
-| Hyphenated Last-First | `Berger-Phil` |
-| Compound last name | `Phil D Berger-Brown` |
-| Prefix and surnames | `Von Berger Phil D`, `Phil D Berger Zapatero` |
-| With suffixes | `Phil Berger Jr.`, `Phil Dale Berger III` |
-| With trailing punctuation | `Phil Berger;`, `Berger, Phil.` |
-
----
-
-## Usage
-
-```python
-first_name, last_name = split_name("Berger, Phil Dale")
-# first_name → 'Phil'
-# last_name  → 'Berger'
-
-first_name, last_name = split_name("Von Berger Phil D")
-# first_name → 'Phil'
-# last_name  → 'Von Berger'
+\\ PHILLIP_BERGER
+// salesforce · c# · python · ai · frontier topics in consciousness
 ```
 
 ---
 
-## How It Works
+I code daily, automating workflows, building tools, and solving problems at the intersection of systems design and human process. Most of what I build starts as a manual task that shouldn't be manual.
 
-1. **Suffix stripping** — common suffixes (Jr., Sr., I–X) are removed before any pattern matching, preventing them from being misidentified as name parts
-2. **Comma detection** — names containing a comma are assumed to be `Last, First` format and handled separately
-3. **Pattern matching** — the remaining token count and structure (hyphens, single-character initials, prefix tokens) determine which parsing branch applies
-4. **Cleanup** — trailing non-alpha characters (periods, semicolons) are stripped from both output fields
+Beyond the code, I'm drawn to the edges of what we understand about consciousness, perception, and reality. Remote viewing, mind-matter interactions, NHI disclosure, the science of ESP. None of it is a distraction from the technical work. It's all part of the same curiosity.
 
 ---
 
-## Context
+```
+// PROJECTS
+```
 
-This logic was developed for an OCR garnishment order processing pipeline where incoming name data arrives in inconsistent formats from court-generated documents across multiple states. Accurate name parsing is a prerequisite for downstream record matching and compliance workflows.
+| Project | Stack | Description |
+|---|---|---|
+| [SOP Consolidation Tool](https://phillipberger.com) | HTML / JS | Single-file app consolidating 100+ garnishment SOPs into a unified interactive reference |
+| [Name Parser](https://github.com/excelmon/excelmon.github.io/tree/main/projects/name-parser) | Python | Splits raw full name strings for OCR garnishment order processing |
+| [File Manager App](https://github.com/excelmon/excelmon.github.io/tree/main/projects/file-manager-app) | C# / .NET 8 | Automates high-volume file operations across local and network directories |
+| [LST Display](https://github.com/excelmon/excelmon.github.io/tree/main/projects/lst-display) | C++ / Arduino | Inkplate 10 e-ink display showing Local Sidereal Time with peak RV window countdown |
+| [Claude-Assisted RV Protocol](https://github.com/excelmon/excelmon.github.io/tree/main/projects/remote-viewing-protocol) | Protocol / Doc | Verifiable remote viewing protocol using password-protected target containers |
 
 ---
 
-## Author
+```
+// CURRENTLY EXPLORING
+> Building an RV lexicon and exploring signal extraction
+> ARV protocols
+> Learning more about AI-assisted systems design
+```
 
-[Phillip Berger](https://phillipberger.com) — phillipberger.com
+---
+
+```
+// FIND ME
+> phillipberger.com
+> linkedin.com/in/phillip-berger-99815488
+```
