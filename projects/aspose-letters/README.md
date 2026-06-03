@@ -10,7 +10,6 @@ The included `DemoLetterConstructor` generates a two-page sample letter that wal
 
 <img width="597" height="770" alt="demo-letter-preview" src="https://github.com/user-attachments/assets/e3109227-a407-45ef-9608-1baf067317da" />
 
-
 ## Project Structure
 
 ```
