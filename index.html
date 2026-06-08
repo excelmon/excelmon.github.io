@@ -63,6 +63,7 @@
       align-items: center;
       gap: 20px;
       flex-wrap: wrap;
+      position: relative;
     }
 
     header .name {
@@ -388,10 +389,119 @@
 
     footer .footer-right a:hover { color: var(--accent); }
 
+    /* ── Mobile folder-tab nav ── */
+    .tab-row {
+      display: none;
+      position: absolute;
+      bottom: 0; /* bottom of tab flush with header bottom border */
+      left: 18px;
+      z-index: 10;
+    }
+
+    .folder-nav-wrap {
+      display: inline-block;
+      position: relative;
+    }
+
+    .folder-tab-btn {
+      background: var(--bg);
+      border: none;
+      color: var(--accent);
+      font-family: var(--font);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      padding: 6px 14px;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.15s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      width: 160px;
+      justify-content: flex-start;
+      gap: 6px;
+    }
+
+
+    /* SVG notched border sits behind content, covers all four sides with cut corner */
+    .folder-tab-btn .tab-border {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .folder-tab-btn .tab-border polyline {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1;
+      transition: stroke 0.15s;
+      /* Draw: bottom-left → top-left → top (to notch) → notch point → right → bottom-right
+         bottom edge intentionally omitted so tab merges with dropdown */
+    }
+
+    .folder-tab-btn:hover .tab-border polyline {
+      stroke: var(--accent);
+    }
+
+    .folder-tab-btn:hover {
+      opacity: 0.75;
+    }
+
+    .folder-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      width: 160px;
+      z-index: 100;
+    }
+
+    .folder-dropdown.open {
+      display: block;
+    }
+
+    .folder-dropdown-comment {
+      color: var(--text-dim);
+      font-size: 10px;
+      padding: 8px 14px 4px;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border-2);
+    }
+
+    .folder-dropdown button {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      border-left: 2px solid transparent;
+      padding: 10px 14px;
+      color: var(--text-mute);
+      font-family: var(--font);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      text-align: left;
+      transition: color 0.15s;
+    }
+
+    .folder-dropdown button:hover { color: var(--text-sec); }
+
+    .folder-dropdown button.active {
+      color: var(--text-pri);
+      border-left: 2px solid var(--accent);
+    }
+
     /* ── Responsive ── */
     @media (max-width: 600px) {
-      header { padding: 14px 18px; }
-      nav { width: 130px; min-width: 130px; }
+      header { padding: 14px 18px; gap: 10px; }
+      nav { display: none; }
+      .tab-row { display: block; }
       main { padding: 20px 18px; }
       footer { padding: 12px 18px; }
       .interest-row { flex-wrap: wrap; gap: 4px; }
@@ -405,9 +515,26 @@
 
   <header>
     <span class="name">\\ PHILLIP_BERGER</span>
-    <span class="tagline">// salesforce &middot; c# &middot; python &middot; ai &middot; frontier topics in consciousness &middot; dallas, tx</span>
+    <span class="tagline">salesforce &middot; c# &middot; python &middot; ai &middot; frontier topics in consciousness &middot; dallas, tx</span>
     <div class="header-right">
       <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">[ light ]</button>
+    </div>
+    <div class="tab-row">
+      <div class="folder-nav-wrap">
+        <button class="folder-tab-btn" id="folderTabBtn" onclick="toggleFolderNav(this)">
+          <svg class="tab-border" aria-hidden="true">
+            <polyline id="tabBorderPoly" points=""/>
+          </svg>
+          &gt; NAV
+        </button>
+        <div class="folder-dropdown" id="folderDropdown">
+          <button class="active" onclick="showMobile('about', this)">ABOUT</button>
+          <button onclick="showMobile('projects', this)">PROJECTS</button>
+          <button onclick="showMobile('interests', this)">INTERESTS</button>
+          <button onclick="showMobile('exploring', this)">EXPLORING</button>
+          <button onclick="showMobile('contact', this)">CONTACT</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -659,6 +786,80 @@
     document.getElementById(id).classList.add('active');
     el.classList.add('active');
   }
+
+  function showMobile(id, el) {
+    // Sync content
+    document.querySelectorAll('.section').forEach(function(s) {
+      s.classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+    // Sync desktop nav active state
+    document.querySelectorAll('nav button').forEach(function(b) {
+      b.classList.remove('active');
+    });
+    var navBtns = document.querySelectorAll('nav button');
+    navBtns.forEach(function(b) {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) {
+        b.classList.add('active');
+      }
+    });
+    // Sync mobile dropdown active state
+    document.querySelectorAll('.folder-dropdown button').forEach(function(b) {
+      b.classList.remove('active');
+    });
+    el.classList.add('active');
+    // Close dropdown
+    document.getElementById('folderDropdown').classList.remove('open');
+    document.getElementById('folderTabBtn').classList.remove('open');
+  }
+
+  function toggleFolderNav(btn) {
+    btn.classList.toggle('open');
+    document.getElementById('folderDropdown').classList.toggle('open');
+  }
+
+  // Close folder dropdown if clicking outside
+  document.addEventListener('click', function(e) {
+    var wrap = document.querySelector('.folder-nav-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('folderDropdown').classList.remove('open');
+      document.getElementById('folderTabBtn').classList.remove('open');
+    }
+  });
+
+  // Sync tab button width to dropdown, then draw SVG border
+  function drawTabBorder() {
+    var btn = document.getElementById('folderTabBtn');
+    var drop = document.getElementById('folderDropdown');
+    if (!btn || !drop) return;
+
+    // Measure dropdown width
+    drop.style.visibility = 'hidden';
+    drop.style.display = 'block';
+    var dropW = drop.offsetWidth;
+    drop.style.display = '';
+    drop.style.visibility = '';
+
+    btn.style.width = dropW + 'px';
+
+    var poly = document.getElementById('tabBorderPoly');
+    if (!poly) return;
+    var w = btn.offsetWidth;
+    var h = btn.offsetHeight;
+    var notch = 9;
+    var pts = [
+      [0, h],
+      [0, 0],
+      [w - notch, 0],
+      [w, notch],
+      [w, h]
+    ].map(function(p){ return p[0]+','+p[1]; }).join(' ');
+    poly.setAttribute('points', pts);
+  }
+
+  window.addEventListener('load', drawTabBorder);
+  window.addEventListener('resize', drawTabBorder);
+  setTimeout(drawTabBorder, 100);
 
   function toggleTheme() {
     var html = document.documentElement;
