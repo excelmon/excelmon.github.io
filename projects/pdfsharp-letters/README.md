@@ -2,6 +2,8 @@
 
 A C# .NET 8 library for generating structured business letters as PDF files, built on [PDFsharp 6.2](https://www.nuget.org/packages/PDFsharp/6.2.1) (MIT license). Originally developed as a proof-of-concept to demonstrate PDF generation for garnishment correspondence, and subsequently converted from Aspose.PDF to PDFsharp to eliminate the commercial license dependency.
 
+<img width="715" height="922" alt="image" src="https://github.com/user-attachments/assets/7966b65a-288a-498e-82f6-63442ec78c3a" />
+
 ---
 
 ## Background
