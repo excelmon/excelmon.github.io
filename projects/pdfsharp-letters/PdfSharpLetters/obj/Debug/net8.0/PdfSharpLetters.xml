@@ -1,0 +1,263 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PdfSharpLetters</name>
+    </assembly>
+    <members>
+        <member name="T:PdfSharpLetters.DevTesting.DrawMeasurementTestLetter">
+             <summary>
+             Dev/testing letter that draws measurement lines and labeled points to help
+             verify layout positions. Run by setting isDevTesting = true in Program.cs.
+            
+             In the original Aspose project this also generated a charWidthsDict.txt output
+             by measuring each character. In PdfSharp you can use gfx.MeasureString() directly
+             at draw time, so the static dictionary is only needed for the pre-render height
+             estimate in PdfMeasurementUtils.CalculateTextRectangleHeight().
+             </summary>
+        </member>
+        <member name="T:PdfSharpLetters.DevTesting.PoemTest">
+             <summary>
+             Tests drawing a multi-segment poem with mixed font styles, a bounding rectangle,
+             and measurement lines — translated from the original Aspose PoemTest.
+            
+             KEY DIFFERENCE FROM ASPOSE:
+             In Aspose, the drawing (Graph) layer was always rendered on top of the TextBuilder
+             layer regardless of Z-Index, so a filled rectangle would obscure text placed before it.
+             In PdfSharp, XGraphics draws in the order you call it — text and shapes share one canvas.
+             You control layering simply by calling draws in the right order: shapes first, text on top.
+             </summary>
+        </member>
+        <member name="T:PdfSharpLetters.Helpers.PdfDrawingUtils">
+             <summary>
+             Drawing utilities: shapes, measurement lines, and dev/testing overlays.
+            
+             In Aspose, shapes were added to a Graph object that was attached to a Page.
+             In PdfSharp, we draw directly onto an XGraphics context — no intermediate Graph.
+             All methods here take XGraphics gfx instead of Graph graph.
+             </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfDrawingUtils.AddDrawingRectangle(PdfSharp.Drawing.XGraphics,System.Single,System.Single,System.Single,System.Double,System.Double,PdfSharp.Drawing.XColor)">
+            <summary>
+            Draws a filled rectangle with a gray border, optionally buffered outward.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfDrawingUtils.DrawMeasureLineMM(PdfSharp.Drawing.XGraphics,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Draws a dotted measurement line between two mm-coordinate points and
+            returns a label string (caller places with DrawString if desired).
+            Orientation is detected automatically; tails are color-coded:
+              horizontal → blue, vertical → red, diagonal → green.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfDrawingUtils.DrawMeasureLineRectangle(PdfSharp.Drawing.XGraphics,PdfSharp.Drawing.XRect)">
+            <summary>
+            Draws measurement lines around a rectangle (left margin, width, right margin, height).
+            Returns label strings the caller can draw at the midpoints if desired.
+            </summary>
+        </member>
+        <member name="T:PdfSharpLetters.Helpers.PdfFontUtils">
+            <summary>
+            Font factory for the letter project.
+            Each method returns a ready-to-use XFont. Callers pass it to gfx.DrawString().
+            XFont is immutable and lightweight — create once per draw call, or cache if desired.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfFontUtils.FontTimes">
+            <summary>Times New Roman 9pt, regular — default body text.</summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfFontUtils.FontTimesBold">
+            <summary>Times New Roman 9pt, bold — for labels and section headers.</summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfFontUtils.FontTimesBoldTitle">
+            <summary>Times New Roman 14pt, bold italic — letter title.</summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfFontUtils.FontArial">
+            <summary>Arial 8pt, regular — supplementary text.</summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfFontUtils.FontDollarLine">
+            <summary>Times New Roman 9pt, regular (alias used for dollar-line text).</summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfFontUtils.FormatAmountAsString(System.Double)">
+            <summary>
+            Converts a double to a currency string: comma-separated with 2 decimal places (1,000.00).
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfMeasurementUtils.FromMMToPoints(System.Double)">
+            <summary>
+            Convert millimeters to PDF points (1 point = 1/72 inch).
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfMeasurementUtils.FromPointsToMm(System.Double)">
+            <summary>
+            Convert PDF points to millimeters.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfMeasurementUtils.MeasureStringWidth(PdfSharp.Drawing.XGraphics,System.String,PdfSharp.Drawing.XFont)">
+            <summary>
+            Measures the rendered width of a string using live PdfSharp font metrics.
+            Prefer this over the static char-width dictionary when an XGraphics context is available.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfMeasurementUtils.CalculateCenteredXPosition(System.Double,System.Double)">
+            <summary>
+            Calculates the X position that centers a string of the given width on a page.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfMeasurementUtils.CalculateTextRectangleHeight(System.String,System.Double)">
+            <summary>
+            Splits text into words and counts required lines given an available line width (in mm).
+            Uses the static CharWidthsTimesSize9 dictionary — accurate for Times New Roman 9pt body text.
+            </summary>
+        </member>
+        <member name="T:PdfSharpLetters.Helpers.PdfTextUtils">
+             <summary>
+             Text drawing utilities for the letter project.
+            
+             COORDINATE SYSTEM NOTE:
+             PdfSharp uses a top-left origin where Y increases downward (screen coordinates),
+             unlike Aspose which used bottom-left with Y increasing upward.
+             All yTracking values in this project flow top-to-bottom: yTracking increases as
+             we move down the page. Page height is added to position from top of page.
+             </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.SimpleTextFragmentTimes(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.String)">
+            <summary>
+            Draws a single line of Times New Roman 9pt text at the given position.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.SimpleTextFragmentTimesRed(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.String)">
+            <summary>
+            Draws a single line of Times New Roman 9pt text in red.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.SimpleTextFragmentTimesUnderlined(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.String)">
+            <summary>
+            Draws a single line of Times New Roman 9pt text with an underline drawn as a line
+            beneath the text (PdfSharp does not have a built-in underline flag for DrawString).
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.SimpleTextFragmentLetterTitle(PdfSharp.Drawing.XGraphics,System.Double,System.String)">
+            <summary>
+            Draws a centered red letter title at the standard title Y position.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.NumberedStatement(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.Double,System.String,System.String)">
+            <summary>
+            Draws: [number]  [statement text]
+            Example: [3.]  [List of outstanding debts]
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.NumberedUnderlineAnswer(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.Double,System.String,System.String,System.String)">
+            <summary>
+            Draws: [number]  [question text][underlined answer]
+            Example: [1.]  [Date of last remitted payment:  ][ June 13, 2026]
+            The answer segment is underlined by drawing a line beneath it.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.NumberedUnderlineDollarAnswer(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.Double,System.String,System.String,System.Double)">
+            <summary>
+            Draws: [number]  [question text]  [$ __________] overlaid with [right-aligned dollar amount]
+            Example: [2.]  [Amount of last remitted payment:]  [$ __________] ← [15,000.00]
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.NumberedUnderLineDollarAnswerRightLabel(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.Double,System.Double,System.String,System.String,System.Double)">
+            <summary>
+            Draws: [subletter]  [$ __________] overlaid with [right-aligned dollar amount]  [label]
+            Example: [a.]  [$ __________] ← [10,000.99]  [Federal Income Tax]
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.TextRectangle(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.Double,System.String,System.Boolean)">
+             <summary>
+             Draws a word-wrapped paragraph within a bounding rectangle defined by
+             xIndent (left), xRightMargin (right), and yIndent (top of the text block).
+            
+             Returns the height of the rendered text block in points so the caller
+             can advance yTracking correctly.
+            
+             IMPORTANT: blockHeight is derived from the same MeasureString word-wrap pass
+             that draws the text, so the bounding box (measure=true) always matches the
+             actual rendered lines. Do not use CalculateTextRectangleHeight here — it uses
+             the static char-width dict which can disagree with live font metrics.
+             </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.NumberedTextRectangleUnderlineAnswer(PdfSharp.Drawing.XGraphics,System.Double,System.Double,System.Double,System.Double,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Draws a number label, then a word-wrapped question+underlined-answer block.
+            Returns the block height in points.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.DrawUnderline(PdfSharp.Drawing.XGraphics,PdfSharp.Drawing.XFont,System.String,System.Double,System.Double)">
+            <summary>
+            Draws an underline beneath a string by measuring text width and drawing a horizontal line.
+            Underline is placed 1.5pt below the text baseline (standard convention).
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.DrawWrappedText(PdfSharp.Drawing.XGraphics,PdfSharp.Drawing.XFont,PdfSharp.Drawing.XBrush,System.String,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Word-wraps text within [xLeft, xRight] starting at yTop, advancing by lineHeight per line.
+            Returns the number of lines drawn, so callers can compute block height from a single pass.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.PdfTextUtils.DrawWrappedTextWithUnderlinedSuffix(PdfSharp.Drawing.XGraphics,PdfSharp.Drawing.XFont,PdfSharp.Drawing.XBrush,System.String,System.String,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Like DrawWrappedText, but the answer suffix on the last line is underlined.
+            Treats question+answer as a single flowing paragraph: wraps all words together,
+            then underlines only the answer portion wherever it ends up.
+            Returns the total line count so callers can compute block height.
+            </summary>
+        </member>
+        <member name="T:PdfSharpLetters.Helpers.WindowsFontResolver">
+             <summary>
+             Resolves font requests to physical .ttf files in C:\Windows\Fonts.
+             Covers every typeface used in this project: Times New Roman, Arial.
+            
+             Register once at application startup:
+                 GlobalFontSettings.FontResolver = new WindowsFontResolver();
+            
+             Why a custom resolver instead of GlobalFontSettings.UseWindowsFontsUnderWindows?
+             The UseWindowsFontsUnderWindows flag is documented as "development only" by PDFsharp
+             and cannot be relied on in production. A custom IFontResolver is the recommended
+             production approach per https://docs.pdfsharp.net/PDFsharp/Topics/Fonts/Font-Resolving.html
+             </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.WindowsFontResolver.ResolveTypeface(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Maps a (familyName, bold, italic) request to a face name string.
+            Return null to let PDFsharp fall through to the fallback resolver.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.Helpers.WindowsFontResolver.GetFont(System.String)">
+            <summary>
+            Returns the raw bytes of the font file for the given face name.
+            faceName is whatever string was returned from ResolveTypeface above.
+            </summary>
+        </member>
+        <member name="T:PdfSharpLetters.Sections.IAddress">
+            <summary>
+            Represents a mailing address with standard components.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.TestLetters.BaseLetterConstructor.CreatePage(PdfSharp.Pdf.PdfDocument)">
+            <summary>
+            Adds a new page sized to US Letter (215.9 x 279.4 mm).
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.TestLetters.BaseLetterConstructor.CreateGraphics(PdfSharp.Pdf.PdfPage)">
+            <summary>
+            Creates an XGraphics drawing context for the given page.
+            Callers are responsible for disposing it (use 'using' or call Dispose()).
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.TestLetters.BaseLetterConstructor.GetInitialYPositionForRELine">
+            <summary>
+            Returns the initial Y position (from top) for the RE line on page 1,
+            matching the original 107 mm header offset.
+            </summary>
+        </member>
+        <member name="M:PdfSharpLetters.TestLetters.BaseLetterConstructor.GetInitialYPositionForAdditionalPage">
+            <summary>
+            Returns the initial Y position for page 2+ content.
+            </summary>
+        </member>
+    </members>
+</doc>
