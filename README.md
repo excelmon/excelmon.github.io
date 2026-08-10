@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ```
 \\ PHILLIP_BERGER
 // salesforce · c# · python · ai · frontier topics in consciousness
