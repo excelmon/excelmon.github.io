@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#070b08">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="terminology.db">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Interactive terminology reference terminal.">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20180%20180%22%3E%3Crect%20width%3D%22180%22%20height%3D%22180%22%20rx%3D%2238%22%20fill%3D%22%23070b08%22%2F%3E%3Crect%20x%3D%2222%22%20y%3D%2234%22%20width%3D%22136%22%20height%3D%22112%22%20rx%3D%2210%22%20fill%3D%22%230d1611%22%20stroke%3D%22%231f4a30%22%20stroke-width%3D%224%22%2F%3E%3Ccircle%20cx%3D%2242%22%20cy%3D%2251%22%20r%3D%225%22%20fill%3D%22%23ff6b6b%22%2F%3E%3Ccircle%20cx%3D%2258%22%20cy%3D%2251%22%20r%3D%225%22%20fill%3D%22%23ffb454%22%2F%3E%3Ccircle%20cx%3D%2274%22%20cy%3D%2251%22%20r%3D%225%22%20fill%3D%22%234ffb86%22%2F%3E%3Cpath%20d%3D%22M42%2082h55M42%20101h75M42%20120h48%22%20stroke%3D%22%234ffb86%22%20stroke-width%3D%227%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<title>terminology.db</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070b08;
+    --bg-panel: #0d1611;
+    --bg-inset: #081209;
+    --green: #4ffb86;
+    --green-bright: #a8ffc4;
+    --green-dim: #2b8f52;
+    --green-faint: #1c5c37;
+    --amber: #ffb454;
+    --text-muted: #6f9a80;
+    --border: #1f4a30;
+    --danger: #ff6b6b;
+
+    --window-bg: var(--bg-panel);
+    --title-bg: #0a130d;
+    --title-border: var(--border);
+    --window-radius: 8px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--green);
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding:
+      max(32px, env(safe-area-inset-top))
+      max(16px, env(safe-area-inset-right))
+      max(32px, env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
+  /* ---------- CRT wrapper ---------- */
+  .crt {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .crt::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.025) 0px,
+      rgba(255,255,255,0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode: overlay;
+    z-index: 5;
+    border-radius: 8px;
+  }
+
+  .terminal-window {
+    position: relative;
+    background: var(--window-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--window-radius);
+    box-shadow:
+      0 0 0 1px rgba(79, 251, 134, 0.05),
+      0 20px 60px rgba(0,0,0,0.6),
+      0 0 40px rgba(79, 251, 134, 0.06);
+    overflow: hidden;
+    animation: flicker 6s infinite steps(1);
+  }
+
+  @keyframes flicker {
+    0%, 96%, 100% { opacity: 1; }
+    97% { opacity: 0.94; }
+    98% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-window { animation: none; }
+  }
+
+  /* ---------- title bar ---------- */
+  .title-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--title-bg);
+    border-bottom: 1px solid var(--title-border);
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green-faint); }
+  .dot.amber { background: var(--amber); opacity: 0.85; }
+  .dot.red { background: var(--danger); opacity: 0.7; }
+
+  .title-bar span.name {
+    margin-left: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 7px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--green-dim);
+    color: var(--green-bright);
+    background: rgba(79, 251, 134, 0.05);
+  }
+
+  .theme-toggle .theme-icon { font-size: 11px; }
+
+  /* ---------- Windows theme ---------- */
+  .terminal-window.windows-theme {
+    --bg-panel: #111111;
+    --bg-inset: #050505;
+    --green: #c7f0d0;
+    --green-bright: #f2fff5;
+    --green-dim: #8aaa93;
+    --green-faint: #4c5d51;
+    --amber: #d8a84e;
+    --text-muted: #9aa39d;
+    --border: #343434;
+    --window-bg: #111111;
+    --title-bg: #202020;
+    --title-border: #343434;
+    --window-radius: 2px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03),
+      0 18px 50px rgba(0,0,0,0.65);
+  }
+
+  .terminal-window.windows-theme .title-bar {
+    padding: 8px 10px 8px 12px;
+    min-height: 34px;
+  }
+
+  .terminal-window.windows-theme .dot { display: none; }
+
+  .terminal-window.windows-theme .title-bar::before {
+    content: '▣';
+    color: #cfcfcf;
+    font-size: 13px;
+    margin-right: 2px;
+  }
+
+  .terminal-window.windows-theme .title-bar span.name {
+    margin-left: 0;
+    color: #d7d7d7;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .windows-controls {
+    display: none;
+  }
+
+  .terminal-window.windows-theme .windows-controls {
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+  }
+
+  .windows-controls button {
+    width: 40px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #d5d5d5;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    cursor: default;
+  }
+
+  .windows-controls .close { font-size: 15px; }
+
+  .terminal-window.windows-theme .windows-controls .close:hover {
+    background: #c42b1c;
+    color: white;
+  }
+
+  .terminal-window.windows-theme .windows-controls button:not(.close):hover {
+    background: #353535;
+  }
+
+  .terminal-window.windows-theme .banner {
+    font-family: 'Cascadia Mono', 'Consolas', 'Courier New', monospace;
+    text-shadow: none;
+  }
+
+  .terminal-window.windows-theme select,
+  .terminal-window.windows-theme button.flashcard-btn,
+  .terminal-window.windows-theme .output-panel {
+    border-radius: 2px;
+  }
+
+  .terminal-window.windows-theme button.flashcard-btn {
+    color: #d8d8d8;
+    border-color: #666;
+  }
+
+  .terminal-window.windows-theme button.flashcard-btn:hover {
+    background: rgba(255,255,255,0.05);
+    box-shadow: none;
+  }
+
+  /* ---------- body ---------- */
+  .terminal-body {
+    padding: 22px 24px 26px;
+    min-height: 360px;
+  }
+
+  .banner {
+    font-family: 'VT323', monospace;
+    font-size: 30px;
+    line-height: 1.1;
+    color: var(--green-bright);
+    text-shadow: 0 0 12px rgba(79,251,134,0.35);
+    margin: 0 0 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .subhead {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0 0 22px;
+  }
+
+  /* boot sequence */
+  #boot {
+    font-size: 13px;
+    line-height: 1.9;
+    min-height: 360px;
+  }
+  #boot .boot-line { opacity: 0; animation: bootIn 0.15s ease-out forwards; }
+  #boot .boot-line.dim { color: var(--green-dim); }
+  @keyframes bootIn { to { opacity: 1; } }
+
+  #main { display: none; }
+  #main.visible { display: block; animation: bootIn 0.3s ease-out; }
+
+  /* ---------- prompt rows ---------- */
+  .prompt-row {
+    margin-bottom: 18px;
+  }
+
+  .prompt-row.hidden { display: none; }
+
+  label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--green-dim);
+    margin-bottom: 6px;
+  }
+
+  label::before {
+    content: "> ";
+    color: var(--amber);
+  }
+
+  select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--bg-inset);
+    color: var(--green-bright);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 34px 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--green-dim) 50%),
+                       linear-gradient(135deg, var(--green-dim) 50%, transparent 50%);
+    background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    transition: border-color 0.15s ease;
+  }
+
+  select:hover { border-color: var(--green-dim); }
+
+  select:focus-visible, button:focus-visible {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(79, 251, 134, 0.25);
+  }
+
+  option { background: var(--bg-inset); color: var(--green-bright); }
+
+  /* ---------- actions ---------- */
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 22px 0 20px;
+    flex-wrap: wrap;
+  }
+
+  button.flashcard-btn {
+    background: transparent;
+    color: var(--amber);
+    border: 1px solid var(--amber);
+    border-radius: 4px;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  button.flashcard-btn:hover {
+    background: rgba(255, 180, 84, 0.1);
+    box-shadow: 0 0 16px rgba(255, 180, 84, 0.25);
+  }
+
+  button.flashcard-btn:active { transform: translateY(1px); }
+
+  .hint {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ---------- output ---------- */
+  .output-panel {
+    background: var(--bg-inset);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px 18px;
+    min-height: 120px;
+  }
+
+  .output-empty {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .output-cat {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--green-dim);
+    margin-bottom: 8px;
+  }
+
+  .output-label {
+    font-size: 15px;
+    color: var(--green-bright);
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+
+  .output-label::before { content: "$ "; color: var(--amber); }
+
+  pre.output-value {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--green);
+  }
+
+  .line-reveal {
+    opacity: 0;
+    display: block;
+    animation: revealLine 0.18s ease-out forwards;
+  }
+
+  /* tighter spacing for table-like rows (lines containing "|") */
+  .line-tight {
+    line-height: 1.15;
+  }
+
+  .line-spacer {
+    line-height: 0.8;
+  }
+
+  @keyframes revealLine {
+    from { opacity: 0; transform: translateY(3px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .line-reveal { animation: none; opacity: 1; }
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--green);
+    margin-left: 2px;
+    vertical-align: -2px;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  @media (max-width: 480px) {
+    body {
+      align-items: flex-start;
+      padding-top: max(18px, env(safe-area-inset-top));
+      padding-bottom: max(18px, env(safe-area-inset-bottom));
+    }
+
+    .banner { font-size: 24px; }
+    .terminal-body { padding: 18px 16px 20px; }
+
+    select,
+    button.flashcard-btn {
+      min-height: 44px;
+    }
+
+    .theme-toggle {
+      min-height: 32px;
+      padding: 5px 8px;
+    }
+
+    .output-panel {
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+  @media (max-width: 480px) {
+      pre.output-value {
+          width: 100%;
+          min-width: 0;
+          font-size: 11px;
+          line-height: 1.45;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          word-break: normal;
+      }
+  
+      .line-tight {
+          line-height: 1.2;
+      }
+  }
+
+    .windows-controls button {
+      width: 34px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="crt">
+  <div class="terminal-window">
+    <div class="title-bar">
+      <div class="dot red"></div>
+      <div class="dot amber"></div>
+      <div class="dot"></div>
+      <span class="name">terminology.db</span>
+
+      <button class="theme-toggle" id="theme-toggle" type="button"
+              aria-label="Switch terminal theme" title="Switch terminal theme">
+        <span class="theme-icon">▣</span>
+        <span id="theme-toggle-label">WIN</span>
+      </button>
+
+      <div class="windows-controls" aria-hidden="true">
+        <button type="button" aria-label="Minimize">−</button>
+        <button type="button" aria-label="Maximize">□</button>
+        <button class="close" type="button" aria-label="Close">×</button>
+      </div>
+    </div>
+
+    <div class="terminal-body">
+
+      <div id="boot"></div>
+
+      <div id="main">
+        <p class="banner">TERMINOLOGY REFERENCE</p>
+        <p class="subhead">select an area, then a term</p>
+
+        <div class="prompt-row" id="row-area">
+          <label for="area-select">terminology area</label>
+          <select id="area-select">
+            <option value="" disabled selected>-- choose an area --</option>
+          </select>
+        </div>
+
+        <div class="prompt-row hidden" id="row-term">
+          <label for="term-select">term</label>
+          <select id="term-select">
+            <option value="" disabled selected>-- choose a term --</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button class="flashcard-btn" id="flashcard-btn" type="button">[ FLASHCARD ]</button>
+          <span class="hint">pulls a random term from any area</span>
+        </div>
+
+        <div class="output-panel" id="output">
+          <p class="output-empty">// no term selected yet</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // DATA
+  // Converted from the Python source: triple-quoted strings -> template
+  // literals, tabs -> spaces, dedent applied manually.
+  // ---------------------------------------------------------------
+  const terminologyDict = {
+    people: {
+      catLabel: 'PEOPLE',
+      terms: {
+        thomas_townsend_brown: {
+          label: 'Thomas Townsend Brown',
+          value: `Thomas Townsend Brown (March 18, 1905 - October 27, 1985) was an American inventor whose experiments \
+and research on electricity based anti-gravitational observable momentum by ionizing different materials \
+led him to believe he discovered a type of anti-gravity. He believed this was caused by strong electric fields.
+
+  See:
+      Electrohydrodynamics
+      Biefeld-Brown effect
+      electrogravitics`
+        },
+      }
+    },
+    places: {
+      catLabel: 'PLACES',
+      terms: {
+        stony_brook_university: {
+          label: 'Stony Brook University',
+          value: `Eric Weinstein has frequently discussed Stony Brook University (SUNY Stony Brook) in interviews and \
+podcasts-most notably in relation to its historic mathematics and physics departments, its connection to \
+billionaire hedge fund manager Jim Simons (former math department chair at Stony Brook and founder of \
+Renaissance Technologies), and speculative discussions regarding institutional secrecy or advanced physics.`
+        },
+        renaissance_technologies: {
+          label: 'Renaissance Technologies',
+          value: `Eric Weinstein has frequently discussed Renaissance Technologies (and its legendary Medallion Fund) on podcasts. \
+He highlights the quantitative hedge fund as an anomaly in finance, noting its unprecedented returns and its \
+unique strategy of hiring elite mathematicians, particle theorists, and physicists instead of traditional Wall \
+Street financial analysts.
+
+Skepticism and Wonder: While expressing deep respect for the late founder Jim Simons, Weinstein uses Renaissance \
+as a focal point to question how tightly guarded mathematical black-boxes operate at the absolute pinnacle of \
+global finance, comparing the sheer statistical outlier of their performance against conventional economic theory.`
+        },
+      }
+    },
+    scientific: {
+      catLabel: 'SCIENTIFIC',
+      terms: {
+        electrohydrodynamics: {
+          label: 'electrohydrodynamics',
+          value: `Electrohydrodynamics (EHD), also known as electro-fluid-dynamics (EFD) or electrokinetics, is the study of \
+the dynamics of electrically charged fluids. Electrohydrodynamics (EHD) is a joint domain of electrodynamics \
+and fluid dynamics mainly focused on the fluid motion induced by electric fields. EHD, in its simplest form, \
+involves the application of an electric field to a fluid medium, resulting in fluid flow, form, or properties \
+manipulation. These mechanisms arise from the interaction between the electric fields and charged particles or \
+polarization effects within the fluid. The generation and movement of charge carriers (ions) in a fluid subjected \
+to an electric field are the underlying physics of all EHD-based technologies.`
+        },
+        biefeld_brown_effect: {
+          label: 'Biefeld-Brown effect',
+          value: `The Biefeld-Brown effect is an electrical phenomenon, first noticed by inventor Thomas Townsend Brown in the \
+1920s, where high voltage applied to the electrodes of an asymmetric capacitor causes a net propulsive force \
+toward the smaller electrode. Brown believed this effect was an anti-gravity force, and referred to it as \
+electrogravitics based on it being an electricity/gravity phenomenon. Detailed studies in vacuum chambers failed \
+to replicate Brown's observations and follow-up studies attribute the force measure to corona wind from electrical \
+discharge.`
+        },
+        electrogravitics: {
+          label: 'electrogravitics',
+          value: `Electrogravitics is a speculative propulsion concept proposing a direct link between high-voltage electrostatic \
+fields and gravitational force. Pioneered in the 1920s by inventor Thomas Townsend Brown \
+(the Biefeld-Brown effect), mainstream physics attributes the observed thrust to mundane ionic drift, or \
+"ionic wind," rather than anti-gravity.`
+        },
+        k_dielectric: {
+          label: 'k dielectric',
+          value: `A k dielectric (or kappa dielectric) refers to a material's dielectric constant (k), which measures its \
+ability to store electrical energy in an electric field.`
+        },
+        gravitational_perturbations: {
+          label: 'gravitational perturbations',
+          value: `Gravitational perturbations are small, extra pushes or pulls on an object's path through space. They happen when \
+a nearby planet, star, or misshapen mass adds extra gravity, changing an ideal orbit into a shifting, complex motion.`
+        },
+        plasmonics: {
+          label: 'plasmonics',
+          value: `Plasmonics is the study of how light and free electrons interact at the surface of metals like gold or silver. \
+When light hits a metal nanostructure, it causes the free electrons to ripple together. This creates a wave \
+called a surface plasmon, letting scientists squeeze light into tiny spaces smaller than its own wavelength.
+
+Dr. Lacatski's example: Metals could immit light from their electron spin (indefinitely with no power needed \
+after charge). Integrated metal circuits could replace silicon chips. Objects could be made invisible to the \
+naked eye, as you could engineer the metal surface to guide light around the object.`
+        },
+        dialectical: {
+          label: 'dialectical',
+          value: `Dialectical means relating to a method of reasoning that finds the truth by discussing opposing ideas. \
+It explores how two conflicting forces or contradictory facts interact, blend, or resolve into a deeper \
+understanding.
+
+Core Meanings in Philosophy
+Socratic Method: A back-and-forth dialogue where people with different views use logic to find truth.
+Hegelian Process: Moving forward through a thesis (initial idea), an antithesis (opposite idea), and \
+a synthesis (combined resolution).
+Marxism: Viewing history and society as driven by conflicts between opposing economic and social classes.`
+        },
+      }
+    },
+    esoteric_and_spiritual: {
+      catLabel: 'ESOTERIC AND SPIRITUAL',
+      terms: {
+        jinn: {
+          label: 'Jinn (Islamic)',
+          value: `Islamic Jinn are sentient beings created from a smokeless fire (plasma?) who inhabit a parallel unseen world. \
+Perhaps the same world where our consciousness dwells.`
+        },
+        brahman: {
+          label: 'Brahman (Hindu)',
+          value: `In Hinduism, Brahman is the unchanging, infinite, and all-pervading ultimate reality, consciousness, and \
+cosmic soul of the universe. It is not a distinct personified deity with a human form, but rather the divine \
+source and material fabric of everything that exists.
+
+Core Concepts of Brahman
+Ultimate Reality: The eternal, formless, and absolute principle that creates, sustains, and absorbs the universe.\
+Atman and Brahman: The individual human soul (Atman) is fundamentally identical to the universal soul (Brahman); \
+realizing this non-duality brings spiritual liberation (moksha).
+Immanent and Transcendent: Brahman exists both outside the physical universe as a transcendent power and within \
+all living beings as life energy
+
+Key Distinctions
+Brahman vs. Brahma: Brahman is the formless absolute reality, whereas Brahma is the personalized four-headed \
+creator god of the Hindu Trinity (Trimurti).
+Brahman vs. Brahmin: Brahman is the cosmic spiritual principle, while a Brahmin (often spelled the same way \
+in older texts) is a member of the traditional priestly and scholarly social class (varna).`
+        },
+      }
+    },
+    vocabulary: {
+      catLabel: 'VOCABULARY',
+      terms: {
+        orthogonal: {
+          label: 'orthogonal',
+          value: `Orthogonal means being at right angles or perpendicular to something else. In broader fields like math, \
+science, and computing, it describes things that are completely independent, separate, or do not affect \
+each other.
+
+Core Meanings by Field
+Geometry: Two lines, curves, or planes cross at a 90-degree right angle. \
+Mathematics (Vectors): Two vectors have a dot product (or inner product) equal to zero. \
+Statistics: Two variables are completely separate and statistically independent. \
+Computer Science & Design: Two or more features or systems can change or work without affecting each other`
+        },
+        iconoclastic: {
+          label: 'iconoclastic',
+          value: `The word iconoclastic is an adjective that means attacking or trying to overthrow traditional or popular \
+beliefs, customs, and values. It describes someone or something that breaks the rules and challenges the way \
+things have always been done.
+
+Literal meaning: The word comes from Greek words meaning "image breaker" (eikon for image, and klastes for breaker).
+Religious roots: Long ago, it literally described people who smashed religious statues and sacred pictures.
+Modern use: Today, people rarely break physical objects. Instead, they use "iconoclastic" to describe ideas, \
+art, or speech that challenge social norms.`
+        },
+        irreverent: {
+          label: 'irreverent',
+          value: `Irreverent means showing a lack of respect for people, traditions, holy ideas, or serious things that others \
+usually treat with honor.
+
+Playful mocking: Making fun of strict traditions in a light or funny way.
+Not mean-spirited: Often used to describe clever humor rather than pure hatred.`
+        },
+        forcing_function: {
+          label: 'forcing function',
+          value: `A forcing function is any constraint, event, or design choice that makes a specific action unavoidable. \
+It turns inaction into a costly choice. This forces a system, user, or person to complete a step or change behavior. \
+Key applications include design and engineering constraints productivity habits, and mathematical differential \
+equations. 
+
+Technology can act as a forcing function on human behavior (for good or evil).`
+        },
+        externality: {
+          label: 'externality',
+          value: `An externality is an indirect cost or benefit to a third party who is not part of an economic transaction. 
+These side effects are not shown in the price of the good or service.`
+        },
+        peripatetic: {
+          label: 'peripatetic',
+          value: `Peripatetic means traveling from place to place, often for work, or moving around frequently instead of \
+staying in one fixed location. It can also describe someone or something related to the ancient Greek \
+philosopher Aristotle, who famously walked around while teaching his students.`
+        },
+        heuristic: {
+          label: 'heuristic',
+          value: `A heuristic is a practical rule of thumb or mental shortcut. It helps you solve a problem or make a \
+choice fast. It gives a good enough answer right now. You do not need all the data or a slow math rule.`
+        },
+        first_principles_thinking: {
+          label: 'first principles thinking',
+          value: `First principles thinking is a powerful mental model that involves breaking a complex problem down to its \
+most basic, foundational truths-things you know are 100% true-and building a solution up from scratch. Instead \
+of copying what others do or reasoning by analogy, you question every assumption.
+
+How It Works
+Deconstruct: Take a big problem and split it into its smallest, individual pieces or facts.
+Question Assumptions: Strip away habits, traditions, and "the way things have always been done".
+Verify Truths: Keep digging until you reach core facts that need no further proof.
+Reconstruct: Build an original, brand-new solution from those core truths`
+        },
+      }
+    },
+  };
+
+  // ---------------------------------------------------------------
+  // BOOT SEQUENCE
+  // ---------------------------------------------------------------
+  const bootLines = [
+    { text: 'booting terminology.db ...', dim: false },
+    { text: 'mounting reference tables ...', dim: true },
+    { text: 'loading category index ...', dim: true },
+    { text: 'ready.', dim: false }
+  ];
+
+  const bootEl = document.getElementById('boot');
+  const mainEl = document.getElementById('main');
+
+  function runBoot() {
+    bootLines.forEach((line, i) => {
+      const div = document.createElement('div');
+      div.className = 'boot-line' + (line.dim ? ' dim' : '');
+      div.textContent = line.text;
+      div.style.animationDelay = (i * 220) + 'ms';
+      bootEl.appendChild(div);
+    });
+
+    const totalDelay = bootLines.length * 220 + 350;
+    setTimeout(() => {
+      bootEl.style.display = 'none';
+      mainEl.classList.add('visible');
+    }, totalDelay);
+  }
+
+  // ---------------------------------------------------------------
+  // DROPDOWN POPULATION
+  // ---------------------------------------------------------------
+  const areaSelect = document.getElementById('area-select');
+  const termSelect = document.getElementById('term-select');
+  const rowTerm = document.getElementById('row-term');
+  const outputPanel = document.getElementById('output');
+  const terminalWindow = document.querySelector('.terminal-window');
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeToggleLabel = document.getElementById('theme-toggle-label');
+
+  function applyTheme(theme) {
+    const isWindows = theme === 'windows';
+    terminalWindow.classList.toggle('windows-theme', isWindows);
+    themeToggleLabel.textContent = isWindows ? 'MAC' : 'WIN';
+    themeToggle.setAttribute(
+      'aria-label',
+      isWindows ? 'Switch to macOS theme' : 'Switch to Windows theme'
+    );
+    themeToggle.title = isWindows ? 'Switch to macOS theme' : 'Switch to Windows theme';
+
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) {
+      themeColor.setAttribute('content', isWindows ? '#111111' : '#070b08');
+    }
+    try {
+      localStorage.setItem('terminology-theme', theme);
+    } catch (e) {
+      // Local file viewers may block localStorage.
+    }
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const nextTheme = terminalWindow.classList.contains('windows-theme')
+      ? 'mac'
+      : 'windows';
+    applyTheme(nextTheme);
+  });
+
+  let savedTheme = 'mac';
+
+  try {
+    savedTheme = localStorage.getItem('terminology-theme') || 'mac';
+  } catch (e) {
+    // Local HTML viewers may not provide persistent storage.
+  }
+  applyTheme(savedTheme);
+
+  function populateAreas() {
+    Object.keys(terminologyDict).forEach(catKey => {
+      const opt = document.createElement('option');
+      opt.value = catKey;
+      opt.textContent = terminologyDict[catKey].catLabel;
+      areaSelect.appendChild(opt);
+    });
+  }
+
+  function populateTerms(catKey) {
+    termSelect.innerHTML = '<option value="" disabled selected>-- choose a term --</option>';
+    const terms = terminologyDict[catKey].terms;
+    Object.keys(terms)
+      .sort((a, b) => a.localeCompare(b))
+      .forEach(termKey => {
+        const opt = document.createElement('option');
+        opt.value = termKey;
+        opt.textContent = terms[termKey].label;
+        termSelect.appendChild(opt);
+      });
+  }
+
+  function renderTerm(catKey, termKey) {
+    const cat = terminologyDict[catKey];
+    const term = cat.terms[termKey];
+
+    outputPanel.innerHTML = '';
+
+    const catTag = document.createElement('div');
+    catTag.className = 'output-cat';
+    catTag.textContent = cat.catLabel;
+    outputPanel.appendChild(catTag);
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'output-label';
+    labelEl.textContent = term.label;
+    outputPanel.appendChild(labelEl);
+
+    const pre = document.createElement('pre');
+    pre.className = 'output-value';
+    outputPanel.appendChild(pre);
+
+    const lines = term.value.split('\n');
+    lines.forEach((line, i) => {
+      const span = document.createElement('span');
+
+      span.className = 'line-reveal';
+
+      // Lines that look like table rows (contain "|") get tighter spacing.
+      if (line.includes('|')) {
+        span.classList.add('line-tight');
+      }
+
+      // Empty lines are intentional visual spacers.
+      if (!line.length) {
+        span.classList.add('line-spacer');
+      }
+
+      span.style.animationDelay = (i * 35) + 'ms';
+      span.textContent = line.length ? line : '\u00A0';
+      pre.appendChild(span);
+    });
+
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    pre.appendChild(cursor);
+  }
+
+  // ---------------------------------------------------------------
+  // EVENTS
+  // ---------------------------------------------------------------
+  areaSelect.addEventListener('change', () => {
+    const catKey = areaSelect.value;
+    populateTerms(catKey);
+    rowTerm.classList.remove('hidden');
+    outputPanel.innerHTML = '<p class="output-empty">// choose a term from the list above</p>';
+  });
+
+  termSelect.addEventListener('change', () => {
+    const catKey = areaSelect.value;
+    const termKey = termSelect.value;
+    if (catKey && termKey) renderTerm(catKey, termKey);
+  });
+
+  document.getElementById('flashcard-btn').addEventListener('click', () => {
+    const catKeys = Object.keys(terminologyDict);
+    const randCatKey = catKeys[Math.floor(Math.random() * catKeys.length)];
+    const termKeys = Object.keys(terminologyDict[randCatKey].terms);
+    const randTermKey = termKeys[Math.floor(Math.random() * termKeys.length)];
+
+    areaSelect.value = randCatKey;
+    populateTerms(randCatKey);
+    termSelect.value = randTermKey;
+    rowTerm.classList.remove('hidden');
+
+    renderTerm(randCatKey, randTermKey);
+  });
+
+  // ---------------------------------------------------------------
+  // INIT
+  // ---------------------------------------------------------------
+  runBoot();
+  populateAreas();
+</script>
+
+</body>
+</html>
