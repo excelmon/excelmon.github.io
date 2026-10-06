@@ -509,6 +509,14 @@
       .interest-row { flex-wrap: wrap; gap: 4px; }
       .book-author { white-space: normal; }
     }
+
+    /* Keep book notes visually subordinate on mobile landscape. */
+    @media (max-width: 900px) and (orientation: landscape) {
+      .book-note {
+        font-size: 10px;
+      }
+    }
+
   </style>
 </head>
 <body>
