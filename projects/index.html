@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — Phillip Berger</title>
+  <meta name="description" content="Software projects by Phillip Berger: garnishment process tooling, C#/.NET 8 PDF generation, Python OCR utilities, and file automation.">
+  <link rel="canonical" href="https://phillipberger.com/projects/" />
+
+  <!-- Link previews (LinkedIn, Slack, etc.) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Phillip Berger" />
+  <meta property="og:title" content="Projects — Phillip Berger" />
+  <meta property="og:description" content="Software projects by Phillip Berger: garnishment process tooling, C#/.NET 8 PDF generation, Python OCR utilities, and file automation." />
+  <meta property="og:url" content="https://phillipberger.com/projects/" />
+  <meta property="og:image" content="https://phillipberger.com/assets/img/og-projects.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="627" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script>
+    try { if (localStorage.getItem('site-theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="/assets/css/site.css" rel="stylesheet" />
+</head>
+<body>
+
+<div class="site-wrap">
+
+  <header>
+    <a class="name" href="/" style="text-decoration:none;">PHILLIP_BERGER</a>
+    <span class="tagline">salesforce &middot; c# &middot; python &middot; ai &middot; frontier topics in consciousness &middot; dallas, tx</span>
+    <div class="header-right">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">[ light ]</button>
+    </div>
+    <div class="tab-row">
+      <div class="folder-nav-wrap">
+        <button class="folder-tab-btn" id="folderTabBtn" onclick="toggleFolderNav(this)">
+          <svg class="tab-border" aria-hidden="true">
+            <polyline id="tabBorderPoly" points=""/>
+          </svg>
+          &gt; NAV
+        </button>
+        <div class="folder-dropdown" id="folderDropdown">
+          <a class="nav-link" href="/#about">ABOUT</a>
+          <a class="nav-link active" href="/projects/" aria-current="page">PROJECTS</a>
+          <a class="nav-link" href="/#interests">INTERESTS</a>
+          <a class="nav-link" href="/#exploring">EXPLORING</a>
+          <a class="nav-link" href="/terminology/">TERMINOLOGY</a>
+          <a class="nav-link" href="/#contact">CONTACT</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="body">
+
+    <nav>
+      <div class="nav-comment">// nav</div>
+      <a class="nav-link" href="/#about">ABOUT</a>
+      <a class="nav-link active" href="/projects/" aria-current="page">PROJECTS</a>
+      <a class="nav-link" href="/#interests">INTERESTS</a>
+      <a class="nav-link" href="/#exploring">EXPLORING</a>
+      <a class="nav-link" href="/terminology/">TERMINOLOGY</a>
+      <a class="nav-link" href="/#contact">CONTACT</a>
+    </nav>
+
+    <main>
+
+      <div class="section active" id="projects">
+        <h1 class="section-label" style="font-weight:400;">PROJECTS</h1>
+
+        <div class="project-card" id="sop-consolidation-tool">
+          <div class="project-title">\\ SOP_CONSOLIDATION_TOOL</div>
+          <div class="project-desc">
+            Custom single-file HTML application consolidating 100+ state and federal garnishment SOPs 
+            into a unified, interactive reference tool. Built with a responsive dark/light mode UI
+            and smart dropdown system that dynamically renders state and order-type-specific guidance,
+            including Workday field instructions, legal compliance sections, exception fields, and
+            order-specific messaging from a centralized JavaScript data layer. Eliminates document
+            fragmentation across the organization and ensures consistent, up-to-date process references
+            for the entire garnishment team.
+          </div>
+          <div class="project-tag">[HTML] [INTERNAL TOOLING]</div>
+        </div>
+
+        <div class="project-card" id="name-parser">
+          <div class="project-title">\\ NAME_PARSER</div>
+          <div class="project-desc">
+            Python utility for splitting raw full name strings into first and last
+            name fields. Built for OCR processing of garnishment orders, where name
+            formats vary widely across jurisdictions and document sources. Handles
+            comma, hyphen, prefix, compound surname, and suffix variations.
+          </div>
+          <div class="project-tag">[PYTHON] [OCR] [GARNISHMENT PROCESSING]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/name-parser" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+
+        <div class="project-card" id="file-manager-app">
+          <div class="project-title">\\ FILE_MANAGER_APP</div>
+          <div class="project-desc">
+            .NET 8 C# library for automating high-volume file operations across local
+            and network directories. Supports moving, renaming, and auditing files
+            with optional date-range filtering and automatic subdirectory sorting by
+            year or year/month. Interface-driven architecture with dependency
+            injection via a static Factory, and a StreamWriter-based logger scoped
+            to each operation's lifetime.
+          </div>
+          <div class="project-tag">[C#] [.NET 8] [FILE AUTOMATION] [WINDOWS]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/file-manager-app" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+        <div class="project-card" id="aspose-letters">
+          <div class="project-title">\\ ASPOSE_LETTERS</div>
+          <div class="project-desc">
+            PDF generation framework built with Aspose.PDF and Aspose.Words for
+            .NET 8, developed to explore programmatic document generation with
+            precise layout control. Uses a composable section architecture
+            (letterhead, address blocks, footer, signature) with MM-based
+            positioning converted to PDF points at runtime. Includes a typed
+            field schema with Salesforce API name mapping and a text rectangle
+            height estimator for dynamic vertical layout before rendering.
+          </div>
+          <div class="project-tag">[C#] [.NET 8] [PDF GENERATION] [ASPOSE]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/aspose-letters" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+
+        <div class="project-card" id="pdfsharp-letters">
+          <div class="project-title">\\ PDFSHARP_LETTERS</div>
+          <div class="project-desc">
+            A full conversion of the Aspose.PDF letter framework to PDFsharp 6.2
+            (MIT), eliminating the commercial license dependency while preserving
+            equivalent output. Required rearchitecting the rendering model from
+            object-based paragraph accumulation to direct <code>gfx.DrawString()</code>
+            calls, implementing a custom word-wrap loop with <code>MeasureString()</code>,
+            and writing a <code>WindowsFontResolver</code> to supply system fonts to
+            PDFsharp's Core build. Retains the same composable section architecture,
+            MM-based positioning, typed Salesforce field schema, and scoped
+            <code>XGraphics</code> lifetime pattern from the original project.
+          </div>
+          <div class="project-tag">[C#] [.NET 8] [PDF GENERATION] [PDFSHARP] [MIT]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/pdfsharp-letters" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+
+        <div class="prompt-line" style="margin-top: 20px;">&gt; build.optimize.repeat</div>
+
+        <div class="section-label" style="margin-top: 36px;">SYSTEMS, SIGNALS &amp; CONSCIOUSNESS</div>
+
+        <div class="project-card" id="lst-display">
+          <div class="project-title">\\ LST_DISPLAY</div>
+          <div class="project-desc">
+            Arduino sketch for the Soldered Inkplate 10 (ESP32 e-ink display) that
+            shows Local Sidereal Time, UTC, and local time on a persistent low-power
+            screen. Includes a live countdown to the peak remote viewing window
+            (12:45-14:15 LST), based on parapsychology research suggesting ~400%
+            improved accuracy near 13:30 LST when the galactic center aligns with
+            the horizon. LST is derived from the Unix epoch via Julian Date to avoid
+            a DST double-subtraction bug during CST/CDT transitions.
+          </div>
+          <div class="project-tag">[C++] [ARDUINO] [ESP32] [E-INK] [ASTRONOMY]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/lst-display" target="_blank" rel="noopener">&gt; VIEW SOURCE</a>
+        </div>
+
+        <div class="project-card" id="claude-assisted-rv-protocol">
+          <div class="project-title">\\ CLAUDE-ASSISTED_RV_PROTOCOL</div>
+          <div class="project-desc">
+            A structured, verifiable protocol for conducting remote viewing sessions
+            with Claude AI as tasker or viewer. Uses a password-protected Word
+            document as a tamper-evident target container — locked before the session
+            begins — to eliminate motivated feedback and make results falsifiable.
+            Developed through direct experimentation across live sessions, refining
+            the procedure to give both human and AI a shared standard of integrity.
+          </div>
+          <div class="project-tag">[REMOTE VIEWING] [PROTOCOL] [PARAPSYCHOLOGY] [AI]</div>
+          <a class="project-link" href="https://github.com/excelmon/excelmon.github.io/tree/main/projects/remote-viewing-protocol" target="_blank" rel="noopener">&gt; VIEW PROTOCOL</a>
+        </div>
+        <div class="prompt-line">&gt; signal_detected_</div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <footer>
+    <span class="footer-left"><a href="/" style="color:inherit;">phillipberger.com</a></span>
+    <span class="footer-right">
+      <a href="https://github.com/excelmon" target="_blank" rel="noopener">github/excelmon</a>
+    </span>
+  </footer>
+
+</div>
+
+<script src="/assets/js/site.js"></script>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "962c4d2133ba44c7ba669d0be5d064f4"}'></script><!-- End Cloudflare Web Analytics -->
+
+</body>
+</html>

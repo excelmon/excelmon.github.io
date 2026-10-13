@@ -15,6 +15,8 @@ Beyond the code, I'm drawn to the edges of what we understand about consciousnes
 // PROJECTS
 ```
 
+Full write-ups: [phillipberger.com/projects](https://phillipberger.com/projects/)
+
 | Project | Stack | Description |
 |---|---|---|
 | [Name Parser](https://github.com/excelmon/excelmon.github.io/tree/main/projects/name-parser) | Python | Splits raw full name strings for OCR garnishment order processing |

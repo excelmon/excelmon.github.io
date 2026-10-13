@@ -1,0 +1,535 @@
+/* Shared styles for phillipberger.com — used by / and /projects/ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0d0d0d;
+  --bg-card:   #111111;
+  --border:    #575757;
+  --border-2:  #1e1e1e;
+  --text-pri:  #e8e8e8;
+  --text-sec:  #cacaca;
+  --text-mute: #8a8a8a;
+  --text-dim:  #707070;
+  --accent:    #4ade80;
+  --font:      'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg:        #f5f5f0;
+  --bg-card:   #efefea;
+  --border:    #5a5a5a62;
+  --border-2:  #a7a7a7c2;
+  --text-pri:  #161616;
+  --text-sec:  #292929;
+  --text-mute: #4e4e4e;
+  --text-dim:  #14572a;
+  --accent:    #1a7a3a;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text-sec);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Layout ── */
+.site-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+header .name {
+  color: var(--text-pri);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+header .tagline {
+  color: var(--text-mute);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+header .header-right {
+  margin-left: auto;
+}
+
+/* ── Theme toggle ── */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--text-pri);
+  color: var(--text-pri);
+  font-family: var(--font);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── Body ── */
+.body {
+  display: flex;
+  flex: 1;
+}
+
+/* ── Sidebar nav ── */
+nav {
+  width: 180px;
+  min-width: 180px;
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+}
+
+.nav-comment {
+  color: var(--text-dim);
+  font-size: 11px;
+  padding: 8px 22px 6px;
+  letter-spacing: 0.04em;
+}
+
+nav button,
+nav a.nav-link {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 11px 22px;
+  color: var(--text-mute);
+  font-family: var(--font);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s;
+}
+
+nav button:hover, nav a.nav-link:hover { color: var(--text-sec); text-decoration: none; }
+
+nav button.active {
+  color: var(--text-pri);
+  border-left: 2px solid var(--accent);
+}
+
+/* ── Content ── */
+main {
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 700px;
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+.section-label {
+  color: var(--accent);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+
+/* ── About ── */
+.about-text {
+  color: var(--text-sec);
+  line-height: 2;
+  font-size: 12px;
+  max-width: 560px;
+}
+
+/* ── Projects ── */
+.project-card {
+  border: 1px solid var(--border);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  transition: border-color 0.15s;
+}
+
+.project-card:hover { border-color: #3a3a3a; }
+
+.project-title {
+  color: var(--text-pri);
+  font-size: 12px;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+}
+
+.project-desc {
+  color: var(--text-mute);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.project-tag {
+  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  margin-top: 10px;
+}
+
+.project-link {
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.project-link:hover { text-decoration: underline; }
+
+/* ── Interests ── */
+.interest-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-2);
+  font-size: 12px;
+}
+
+.interest-row:last-child { border-bottom: none; }
+
+.interest-label { color: var(--text-sec); }
+
+.interest-meta {
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Books ── */
+.interests-subhead {
+  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  margin: 24px 0 10px;
+}
+
+.book-row {
+  border-bottom: 1px solid var(--border-2);
+  padding: 14px 0;
+}
+
+.book-row:last-child { border-bottom: none; }
+
+.book-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.book-title {
+  color: var(--text-pri);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.book-author {
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.book-note {
+  color: var(--text-mute);
+  font-size: 11px;
+  line-height: 1.75;
+}
+
+.book-note::before {
+  content: '// ';
+  color: var(--text-dim);
+}
+
+/* ── Exploring ── */
+.exploring-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-2);
+  font-size: 12px;
+  color: var(--text-sec);
+}
+
+.exploring-item:last-of-type { border-bottom: none; }
+
+.exploring-item::before {
+  content: '>';
+  color: var(--accent);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* ── Contact ── */
+.contact-tagline {
+  color: var(--text-mute);
+  font-size: 11px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.contact-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-2);
+  font-size: 12px;
+}
+
+.contact-row:last-of-type { border-bottom: none; }
+
+.contact-label {
+  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  min-width: 64px;
+}
+
+.contact-value {
+  color: var(--text-sec);
+}
+
+.contact-value a {
+  color: var(--text-sec);
+}
+
+.contact-value a:hover { color: var(--accent); }
+
+/* ── Prompt line ── */
+.prompt-line {
+  color: var(--accent);
+  font-size: 11px;
+  margin-top: 28px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Blinking cursor ── */
+.cursor {
+  display: inline-block;
+  width: 7px;
+  height: 13px;
+  background: var(--accent);
+  animation: blink 1s step-end infinite;
+  vertical-align: -2px;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── Footer ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+footer .footer-left {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+footer .footer-right {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+footer .footer-right a {
+  color: var(--text-mute);
+}
+
+footer .footer-right a:hover { color: var(--accent); }
+
+/* ── Mobile folder-tab nav ── */
+.tab-row {
+  display: none;
+  position: absolute;
+  bottom: 0; /* bottom of tab flush with header bottom border */
+  left: 18px;
+  z-index: 10;
+}
+
+.folder-nav-wrap {
+  display: inline-block;
+  position: relative;
+}
+
+.folder-tab-btn {
+  background: var(--bg);
+  border: none;
+  color: var(--accent);
+  font-family: var(--font);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  padding: 6px 14px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  width: 160px;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+
+/* SVG notched border sits behind content, covers all four sides with cut corner */
+.folder-tab-btn .tab-border {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.folder-tab-btn .tab-border polyline {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+  transition: stroke 0.15s;
+  /* Draw: bottom-left → top-left → top (to notch) → notch point → right → bottom-right
+     bottom edge intentionally omitted so tab merges with dropdown */
+}
+
+.folder-tab-btn:hover .tab-border polyline {
+  stroke: var(--accent);
+}
+
+.folder-tab-btn:hover {
+  opacity: 0.75;
+}
+
+.folder-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  width: 160px;
+  z-index: 100;
+}
+
+.folder-dropdown.open {
+  display: block;
+}
+
+.folder-dropdown-comment {
+  color: var(--text-dim);
+  font-size: 10px;
+  padding: 8px 14px 4px;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-2);
+}
+
+.folder-dropdown button,
+.folder-dropdown a.nav-link {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 10px 14px;
+  color: var(--text-mute);
+  font-family: var(--font);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s;
+}
+
+.folder-dropdown button:hover, .folder-dropdown a.nav-link:hover { color: var(--text-sec); text-decoration: none; }
+
+.folder-dropdown button.active {
+  color: var(--text-pri);
+  border-left: 2px solid var(--accent);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  header { padding: 14px 18px; gap: 10px; }
+  nav { display: none; }
+  .tab-row { display: block; }
+  main { padding: 20px 18px; }
+  footer { padding: 12px 18px; }
+  .interest-row { flex-wrap: wrap; gap: 4px; }
+  .book-author { white-space: normal; }
+}
+
+/* Keep book notes visually subordinate on mobile landscape. */
+@media (max-width: 900px) and (orientation: landscape) {
+  .book-note {
+    font-size: 10px;
+  }
+}
+
+/* ── Project page: anchor offset so linked cards aren't flush to the top ── */
+.project-card { scroll-margin-top: 24px; }
+
+/* ── Active state for nav items that are page links (e.g. PROJECTS on /projects/) ── */
+nav a.nav-link.active,
+.folder-dropdown a.nav-link.active {
+  color: var(--text-pri);
+  border-left: 2px solid var(--accent);
+}
+
+/* ── Projects page intro ── */
+.page-intro {
+  color: var(--text-mute);
+  font-size: 11px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+  max-width: 560px;
+}
