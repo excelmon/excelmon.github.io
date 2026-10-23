@@ -424,6 +424,11 @@
     color: var(--green);
   }
 
+  pre.output-value big {
+    font-size: 1.25em;
+    line-height: 1.3;
+  }
+
   .line-reveal {
     opacity: 0;
     display: block;
@@ -1076,9 +1081,46 @@ naked eye, as you could engineer the metal surface to guide light around the obj
         }
       }
     },
+    epistemological_models: {
+      catLabel: 'EPISTEMOLOGICAL MODELS',
+      terms: {
+        epistemological_model: {
+          label: 'epistemological model',
+          value: `Simply a framework, theory, or system that explains how we acquire knowledge and how we \
+determine what is true. The word comes from <i>episteme</i> (the Greek word for knowledge). Each model is a different \
+set of lenses for looking at truth: some focus on logic, some on physical evidence, and others on human history.`,
+        },
+        cartesian_doubt: {
+          label: 'Cartesian doubt',
+          value: `Cartesian doubt is a systematic, methodological skepticism created by René Descartes to strip \
+away false beliefs and find absolute, indubitable truth. By treating any belief with a shadow of doubt as completely \
+false, Descartes used it as a foundational tool to rebuild reliable knowledge.
+
+<big><b>The Three Waves of Doubt</b></big>
+
+Descartes tested his beliefs through escalating levels of skepticism: 
+<b>• Sensory Illusion:</b> Our senses can deceive us about small or distant things, so we cannot trust them completely. 
+<b>• The Dream Argument:</b> We can feel vivid sensations while dreaming, making it hard to prove we are not asleep right now. 
+<b>• The Evil Demon:</b> A malicious, all-powerful deceiver could trick our minds into believing false logical and mathematical truths.
+
+<b><big>The Turning Point and the Cogito</b></big>
+
+Even if an evil demon tricks everything, Descartes realized that someone must be there to be tricked. This led \
+to his famous breakthrough: <b>"Cogito, ergo sum"</b> ("I think, therefore I am"). The mere act of thinking and \
+doubting proves the existence of a thinking self. 
+
+<b><big>Purpose and Legacy</b></big>
+
+<b>• Foundationalism:</b> It acts like emptying a basket of apples to throw out the rotten ones and keep only the good. 
+<b>• Scientific Impact:</b> It helped launch modern science by encouraging researchers to question assumptions and test evidence. 
+<b>• Modern Relevance:</b> It serves as a mental shield against online misinformation, deepfakes, and bad data.
+`,
+        },        
+      }
+    },
     esoteric_and_spiritual: {
       catLabel: 'ESOTERIC AND SPIRITUAL',
-      terms: {
+      terms: { 
         gnosticism: {
           label: 'Gnosticism',
           value: `Gnosticism is an ancient religious and philosophical movement from the Greco-Roman world \
@@ -1415,6 +1457,18 @@ Reconstruct: Build an original, brand-new solution from those core truths`
       });
   }
 
+  // Escapes a line of text, then re-enables a small whitelist of inline
+  // formatting tags: <b>, <strong>, <u>, <i>, <em>, <big> (no attributes allowed).
+  const ALLOWED_INLINE_TAGS = /&lt;(\/?)(b|strong|u|i|em|big)&gt;/gi;
+  function formatInline(text) {
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+    return escaped.replace(ALLOWED_INLINE_TAGS, (m, slash, tag) => `<${slash}${tag.toLowerCase()}>`);
+  }
+
   function renderTerm(catKey, termKey) {
     const cat = terminologyDict[catKey];
     const term = cat.terms[termKey];
@@ -1452,7 +1506,11 @@ Reconstruct: Build an original, brand-new solution from those core truths`
       }
 
       span.style.animationDelay = (i * 35) + 'ms';
-      span.textContent = line.length ? line : '\u00A0';
+      if (line.length) {
+        span.innerHTML = formatInline(line);
+      } else {
+        span.textContent = '\u00A0';
+      }
       pre.appendChild(span);
     });
 
