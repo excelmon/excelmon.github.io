@@ -151,19 +151,21 @@
           <div class="project-desc">
             A synchronicity messenger driven by true randomness. A hardware random number
             generator (RNG-01 from Images SI Inc.) turns radioactive decay events into numbers,
-            which a Raspberry Pi running a .NET 10 service reads over serial and logs to SQLite.
-            When two consecutive numbers land on a key pair, the three numbers just before it
-            pick a message from a library of tarot cards, I Ching hexagrams and short guidance,
-            and it is sent to my phone as an ntfy push notification. Key pairs are tuned so a
-            message arrives about every 1-2 days.
+            which a Raspberry Pi reads over serial, buffers in SQLite and uploads every few seconds
+            to an ASP.NET Core (.NET 10) app on Azure, authenticated with a device key, so nothing
+            is lost if the connection drops. In the cloud, when two consecutive numbers form a key
+            pair, the three numbers just before it pick a message from a library of tarot cards,
+            I Ching hexagrams and short guidance, and it is sent to my phone as an ntfy push
+            notification, with automatic retries. Key pairs are tuned so a message arrives about
+            every 1-2 days.
             <br><br>
-            The website is a static Cloudflare Pages dashboard. Every 5 minutes the Pi exports
-            a read-only snapshot of the database to Cloudflare R2, and a Cloudflare Tunnel
-            exposes a small, cached, read-only feed so new numbers appear on the site within
-            seconds of the device producing them. Visitors never touch the Pi or the database
-            directly.
+            Numbers, messages and delivery history live in Azure SQL, and the app reaches the
+            database through its managed identity, with no stored passwords. The website is a static
+            Cloudflare Pages dashboard that reads cached, read-only public endpoints on the Azure
+            app, so new numbers appear within seconds of the device producing them. Visitors never
+            touch the Pi or the database directly.
           </div>
-          <div class="project-tag">[C#] [.NET 10] [SQLite] [RASPBERRY PI] [CLOUDFLARE] [PYTHON] [SYNCHRONICITY]</div>
+          <div class="project-tag">[C#] [.NET 10] [ASP.NET CORE] [AZURE APP SERVICE] [AZURE SQL] [RASPBERRY PI] [SQLITE] [CLOUDFLARE] [SYNCHRONICITY]</div>
           <a class="project-link" href="https://universecourier.com" target="_blank" rel="noopener">&gt; GO TO universecourier.com</a>
         </div>
 
