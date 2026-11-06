@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PdfSharpLetters")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86f5eb209ca36c6c1347cef30c9291e8483d6a63")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2fedd7afe8be8d3579cc35dc9ad3d78fba62ff48")]
 [assembly: System.Reflection.AssemblyProductAttribute("PdfSharpLetters")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PdfSharpLetters")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

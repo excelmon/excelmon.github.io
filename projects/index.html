@@ -150,22 +150,13 @@
           <div class="project-title">\\ UNIVERSE_COURIER</div>
           <div class="project-desc">
             A synchronicity messenger driven by true randomness. A hardware random number
-            generator (RNG-01 from Images SI Inc.) turns radioactive decay events into numbers,
-            which a Raspberry Pi reads over serial, buffers in SQLite and uploads every few seconds
-            to an ASP.NET Core (.NET 10) app on Azure, authenticated with a device key, so nothing
-            is lost if the connection drops. In the cloud, when two consecutive numbers form a key
-            pair, the three numbers just before it pick a message from a library of tarot cards,
-            I Ching hexagrams and short guidance, and it is sent to my phone as an ntfy push
-            notification, with automatic retries. Key pairs are tuned so a message arrives about
-            every 1-2 days.
-            <br><br>
-            Numbers, messages and delivery history live in Azure SQL, and the app reaches the
-            database through its managed identity, with no stored passwords. The website is a static
-            Cloudflare Pages dashboard that reads cached, read-only public endpoints on the Azure
-            app, so new numbers appear within seconds of the device producing them. Visitors never
-            touch the Pi or the database directly.
+            generator (RNG-01 from Images SI Inc.) turns radioactive decay events into numbers.
+            When two consecutive numbers form a key pair, the three numbers just before it pick a 
+            message from a library of tarot cards, I Ching hexagrams and other categories, and a  
+            message sent to my phone as a ntfy push notification, sms and email, with automatic retries. 
+            Key pairs are tuned so a message arrives about every 1-2 days.
           </div>
-          <div class="project-tag">[C#] [.NET 10] [ASP.NET CORE] [AZURE APP SERVICE] [AZURE SQL] [RASPBERRY PI] [SQLITE] [CLOUDFLARE] [SYNCHRONICITY]</div>
+          <div class="project-tag">[SYNCHRONICITY]</div>
           <a class="project-link" href="https://universecourier.com" target="_blank" rel="noopener">&gt; GO TO universecourier.com</a>
         </div>
 
